@@ -67,40 +67,60 @@ public class PayoutSim{
 		int arrayID = 2;
 		int hardware = 0;
 		String out = "test";
+		String currency = "EUR";
 		
 		 // create a scanner so we can read the command-line input
 		Scanner scanner = new Scanner(System.in);
 		
 		// prompt for Hopper or Validator
-		System.out.print("Enter 1 for Validator Event or 2 for Hopper Event \n");
+		System.out.print("Enter 0 for Validator Event or 1 for Hopper Event \n");
 
 		// set hardware
 		hardware = scanner.nextInt();
 
-		//  prompt for wished Event
-		System.out.print("Enter Event you wish\n2 is event credit\n");
 
-		// get wished Event as arrayID
-		arrayID = scanner.nextInt();
+		switch(hardware){		
+			case 0:
+				//  prompt for wished Event
+				System.out.print("Enter Event you wish\n2 is event:credit\n");
 
-		// prompt for wished amount
-		System.out.print("Enter amount in cent:\n");
+				// get wished Event as arrayID
+				arrayID = scanner.nextInt();
 
-		// set amount
-		amount = scanner.nextInt();
+				// prompt for wished amount
+				System.out.print("Enter amount in cent:\n");
+
+				// set amount
+				amount = scanner.nextInt();
+				
+				if(arrayID == 0){
+					System.out.printf(eventsValidator[arrayID]+"\n",amount);
+				}
+				else if(arrayID == 1 || arrayID == 2){
+					System.out.printf(eventsValidator[arrayID]+"\n",amount,channelid);
+				}
+				else if(arrayID == 3 || arrayID == 4){
+					System.out.printf(eventsValidator[arrayID]+"\n",amount,channelid, out);
+				}
+				else{
+					System.out.printf(eventsValidator[arrayID]+"\n");
+				}
+					
+				break;
+				
+				
+				
+			case 1:
+				System.out.println("ene-mene-muh");
+				//TODO
+				break; 
+				
+			default:
+				System.out.println("Please set the right number for simulating Hardware"); 
+				
+        }
+            
 		
-		if(arrayID == 0){
-			System.out.printf(eventsValidator[arrayID]+"\n",amount);
-		}
-		else if(arrayID == 1 || arrayID == 2){
-			System.out.printf(eventsValidator[arrayID]+"\n",amount,channelid);
-		}
-		else if(arrayID == 3 || arrayID == 4){
-			System.out.printf(eventsValidator[arrayID]+"\n",amount,channelid, out);
-		}
-		else{
-			System.out.printf(eventsValidator[arrayID]+"\n");
-		}
 
 		
 		String output = "{"+eventsValidator[0]+",\"amount\":"+amount+",\"channel\":"+channelid+"}";
