@@ -35,9 +35,33 @@ public class PayoutSim{
 			"{\"event\":\"calibration fail\",\"error\":\"not initialized\"}",
 			"{\"event\":\"calibration fail\",\"error\":\"checksum error\"}",
 			"{\"event\":\"recalibrating\"}"
-			};
+		};
 
-		String[] eventsHopper = {"event\":\"credit", "event\":\"coin credit"};
+		String[] eventsHopper = {"{\"event\":\"read\",\"channel\":%d}",
+			"{\"event\":\"dispensing\",\"amount\":%d}",
+			"{\"event\":\"dispensed\",\"amount\":%d}",
+			"{\"event\":\"cashbox paid\",\"amount\":%d,\"cc\":\"%s\"}",
+			"{\"event\":\"smart emptying\",\"amount\":%d,\"cc\":\"%s\"}",
+			"{\"event\":\"smart emptied\",\"amount\":%d,\"cc\":\"%s\"}",
+			"{\"event\":\"credit\",\"channel\":%d,\"cc\":\"%s\"}",
+			"{\"event\":\"coin credit\",\"amount\":%d,\"cc\":\"%s\"}",
+			"{\"event\":\"incomplete payout\",\"dispensed\":%d,\"requested\":%d,\"cc\":\"%s\"}",
+			"{\"event\":\"incomplete float\",\"dispensed\":%d,\"requested\":%d,\"cc\":\"%s\"}",
+			"{\"event\":\"jammed\"}",
+			"{\"event\":\"empty\"}",
+			"{\"event\":\"emptying\"}",
+			"{\"event\":\"reading\"}",
+			"{\"event\":\"disabled\"}",
+			"{\"event\":\"calibration fail\",\"error\":\"no error\"}",
+			"{\"event\":\"calibration fail\",\"error\":\"sensor flap\"}",
+			"{\"event\":\"calibration fail\",\"error\":\"sensor exit\"}",
+			"{\"event\":\"calibration fail\",\"error\":\"sensor coil 1\"}",
+			"{\"event\":\"calibration fail\",\"error\":\"sensor coil 2\"}",
+			"{\"event\":\"calibration fail\",\"error\":\"not initialized\"}",
+			"{\"event\":\"calibration fail\",\"error\":\"checksum error\"}",
+			"{\"event\":\"recalibrating\"}"
+		};
+
 		int amount = 0;
 		int channelid = 2;
 		int arrayID = 2;
