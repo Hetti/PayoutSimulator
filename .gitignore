@@ -1,1 +1,4 @@
 *.class
+/PayoutSim_v2/PayoutSim/nbproject/private/
+/PayoutSim_v2/PayoutSim/build/
+/PayoutSim_v3/PayoutSimulator/target/
