@@ -6,6 +6,10 @@
 package com.mycompany.payoutsimulator;
 
 import javafx.scene.image.*;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import java.io.File;
+import javafx.embed.swing.JFXPanel;
 
 /**
  *
@@ -151,6 +155,11 @@ public class PayoutFrame extends javax.swing.JFrame {
         textField7.setText("0");
 
         jButton7.setText("Add Money");
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
 
         jLabel12.setText("Paper Money");
 
@@ -405,10 +414,18 @@ public class PayoutFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_textField3ActionPerformed
 
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        // TODO add your handling code here:
+        String musicFile = "src/main/resources/smw_coin.wav";     // For example
+        Media sound = new Media(new File(musicFile).toURI().toString());
+        MediaPlayer mediaPlayer = new MediaPlayer(sound);
+        mediaPlayer.play();
+    }//GEN-LAST:event_jButton7ActionPerformed
+
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -433,7 +450,7 @@ public class PayoutFrame extends javax.swing.JFrame {
         //</editor-fold>
         //</editor-fold>
 
-        
+        JFXPanel fxPanel = new JFXPanel();
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
