@@ -140,7 +140,7 @@ public class PayoutSim extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        int test = Integer.parseInt((String)jComboBox3.getSelectedItem());
+        int papervalue = Integer.parseInt((String)jComboBox3.getSelectedItem());
         //System.out.println(test);
         System.out.printf("{\"event\":\"credit\",\"amount\":%d,\"channel\":%d}",  Integer.parseInt((String)jComboBox3.getSelectedItem())*100 ,2);
     }//GEN-LAST:event_jButton1ActionPerformed
