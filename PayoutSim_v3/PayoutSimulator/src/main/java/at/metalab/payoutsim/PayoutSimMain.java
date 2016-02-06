@@ -6,6 +6,7 @@ import org.redisson.Config;
 import org.redisson.Redisson;
 import org.redisson.RedissonClient;
 import org.redisson.core.MessageListener;
+import org.redisson.core.PatternMessageListener;
 
 import at.metalab.payoutsim.Kassomat.ChannelSetup;
 import at.metalab.payoutsim.Kassomat.Monies;
@@ -20,8 +21,18 @@ public class PayoutSimMain {
 		c.useSingleServer().setAddress("127.0.0.1:6379");
 
 		// use "redis-cli monitor" in the shell to watch the show
-		
+
 		RedissonClient r = Redisson.create(c);
+
+		// log all messages
+		r.<String> getPatternTopic("*").addListener(
+				new PatternMessageListener<String>() {
+					@Override
+					public void onMessage(String pattern, String channel,
+							String msg) {
+						System.out.println("[redis-topic: '" + channel + "'] " + msg);
+					}
+				});
 
 		final ChannelSetup validatorSetup = new ChannelSetup();
 		validatorSetup.setValueInChannel(1, 500);
@@ -133,41 +144,50 @@ public class PayoutSimMain {
 		// startup the JFX gui
 		startupGui(kassomat);
 	}
-	
-	private static void startupGui(Kassomat kassomat) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(PayoutFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(PayoutFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(PayoutFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(PayoutFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
 
-        JFXPanel fxPanel = new JFXPanel();
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                PayoutFrame payoutFrame = new PayoutFrame();
-                payoutFrame.setKassomat(kassomat);
-                payoutFrame.setVisible(true);
-            }
-        });
-		
+	private static void startupGui(Kassomat kassomat) {
+		/* Set the Nimbus look and feel */
+		// <editor-fold defaultstate="collapsed"
+		// desc=" Look and feel setting code (optional) ">
+		/*
+		 * If Nimbus (introduced in Java SE 6) is not available, stay with the
+		 * default look and feel. For details see
+		 * http://download.oracle.com/javase
+		 * /tutorial/uiswing/lookandfeel/plaf.html
+		 */
+		try {
+			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager
+					.getInstalledLookAndFeels()) {
+				if ("Nimbus".equals(info.getName())) {
+					javax.swing.UIManager.setLookAndFeel(info.getClassName());
+					break;
+				}
+			}
+		} catch (ClassNotFoundException ex) {
+			java.util.logging.Logger.getLogger(PayoutFrame.class.getName())
+					.log(java.util.logging.Level.SEVERE, null, ex);
+		} catch (InstantiationException ex) {
+			java.util.logging.Logger.getLogger(PayoutFrame.class.getName())
+					.log(java.util.logging.Level.SEVERE, null, ex);
+		} catch (IllegalAccessException ex) {
+			java.util.logging.Logger.getLogger(PayoutFrame.class.getName())
+					.log(java.util.logging.Level.SEVERE, null, ex);
+		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
+			java.util.logging.Logger.getLogger(PayoutFrame.class.getName())
+					.log(java.util.logging.Level.SEVERE, null, ex);
+		}
+		// </editor-fold>
+		// </editor-fold>
+
+		JFXPanel fxPanel = new JFXPanel();
+		/* Create and display the form */
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				PayoutFrame payoutFrame = new PayoutFrame();
+				payoutFrame.setKassomat(kassomat);
+				payoutFrame.setVisible(true);
+			}
+		});
+
 	}
 }
