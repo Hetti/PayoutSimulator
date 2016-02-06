@@ -1,5 +1,6 @@
 package at.metalab.payoutsim;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -106,10 +107,14 @@ public class Kassomat {
 			}
 		}
 
+		public String getReadableTotalAmount() {
+			return Utils.amountReadable(getTotalAmount());
+		}
+		
 		@Override
 		public String toString() {
 			return super.toString()
-					+ "(totalAmount="
+					+ "(" + getReadableTotalAmount() + ", totalAmount="
 					+ getTotalAmount()
 					+ ", "
 					+ amountByChannel + ")";
@@ -182,6 +187,10 @@ public class Kassomat {
 
 	public int getTotalAmount() {
 		return hopperMonies.getTotalAmount() + validatorMonies.getTotalAmount();
+	}
+	
+	public String getReadableTotalAmount() {
+		return Utils.amountReadable(getTotalAmount());
 	}
 	
 	private final List<Runnable> steps = new ArrayList<Runnable>();

@@ -60,12 +60,6 @@ public class PayoutSimMain {
 		hopperMonies.setAmount(2, 1); // 2 x 0.20 euro
 		hopperMonies.setAmount(3, 5); // 3 x 0.50 euro
 
-		System.out.println("vmonies: " + validatorMonies);
-		System.out.println("hmonies: " + hopperMonies);
-		System.out.println("total: "
-				+ (validatorMonies.getTotalAmount() + hopperMonies
-						.getTotalAmount()));
-
 		// We need all topics
 		final Kassomat kassomat = new Kassomat(validatorSetup, hopperSetup,
 				validatorMonies, hopperMonies,
@@ -76,6 +70,8 @@ public class PayoutSimMain {
 				r.<String> getTopic("validator-response"),
 				r.<String> getTopic("validator-event"));
 
+		System.out.println("amount in kassomat: " + kassomat.getReadableTotalAmount());
+		
 		kassomat.getValidatorEvent().addListener(new MessageListener<String>() {
 
 			@Override
@@ -107,6 +103,7 @@ public class PayoutSimMain {
 				KassomatJson event = KassomatJson.fromJson(message);
 				if ("credit".equals(event.event)) {
 					validatorMonies.increase(Integer.parseInt(event.channel));
+					System.out.println("amount in kassomat now: " + kassomat.getReadableTotalAmount());
 				}
 			}
 		});
@@ -118,6 +115,7 @@ public class PayoutSimMain {
 				KassomatJson event = KassomatJson.fromJson(message);
 				if ("credit".equals(event.event)) {
 					hopperMonies.increase(hopperSetup.getChannel(event.amount));
+					System.out.println("amount in kassomat now: " + kassomat.getReadableTotalAmount());
 				}
 			}
 		});
