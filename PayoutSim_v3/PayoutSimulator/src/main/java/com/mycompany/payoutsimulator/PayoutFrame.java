@@ -88,6 +88,7 @@ public class PayoutFrame extends javax.swing.JFrame {
         jButton9 = new javax.swing.JButton();
         jLabel19 = new javax.swing.JLabel();
         jLabel21 = new javax.swing.JLabel();
+        jButton8 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Legendary Money Simulator with some Fairydust™");
@@ -226,6 +227,14 @@ public class PayoutFrame extends javax.swing.JFrame {
 
         jLabel21.setIcon(new javax.swing.ImageIcon(getClass().getResource("/money.jpeg"))); // NOI18N
 
+        jButton8.setFont(new java.awt.Font("Ubuntu", 1, 18)); // NOI18N
+        jButton8.setText("Shredder your $$$ !™");
+        jButton8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton8ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -270,8 +279,8 @@ public class PayoutFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel21)
                                 .addGap(73, 73, 73)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -321,7 +330,10 @@ public class PayoutFrame extends javax.swing.JFrame {
                                             .addComponent(jLabel9)
                                             .addComponent(jLabel10)
                                             .addComponent(jLabel11)))))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(29, 29, 29)
+                                .addComponent(jButton8)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jButton7)
                                 .addGap(61, 61, 61)))
                         .addGap(9, 9, 9))
@@ -423,7 +435,11 @@ public class PayoutFrame extends javax.swing.JFrame {
                                     .addComponent(jLabel11)))
                             .addComponent(jLabel21))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton7)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton7)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(27, 27, 27)
+                                .addComponent(jButton8)))))
                 .addContainerGap(21, Short.MAX_VALUE))
         );
 
@@ -505,6 +521,14 @@ public class PayoutFrame extends javax.swing.JFrame {
         mediaPlayer.play();
     }//GEN-LAST:event_jButton4ActionPerformed
 
+    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+        // TODO add your handling code here:
+                String musicFile = "src/main/resources/shredder.wav";     // For example
+        Media sound = new Media(new File(musicFile).toURI().toString());
+        MediaPlayer mediaPlayer = new MediaPlayer(sound);
+        mediaPlayer.play();
+    }//GEN-LAST:event_jButton8ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -550,6 +574,7 @@ public static void main(String args[]) {
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
+    private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox2;
