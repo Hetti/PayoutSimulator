@@ -6,11 +6,15 @@
 package com.mycompany.payoutsimulator;
 
 import java.awt.BorderLayout;
+import java.awt.Point;
 import java.awt.Toolkit;
 import javafx.scene.image.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.embed.swing.JFXPanel;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -27,6 +31,9 @@ public class PayoutFrame extends javax.swing.JFrame {
      */
     public PayoutFrame() {
         initComponents();
+        this.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(
+                new ImageIcon(Thread.currentThread().getContextClassLoader().getResource("beutel.gif")).getImage(),
+                new Point(0,0),"custom cursor"));
         
     }
 
@@ -83,6 +90,8 @@ public class PayoutFrame extends javax.swing.JFrame {
         jLabel21 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Legendary Money Simulator with some Fairydust™");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         jButton1.setText("Input Paper Money");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -436,6 +445,11 @@ public class PayoutFrame extends javax.swing.JFrame {
         mediaPlayer.play();
         //TODO Coin Code
         int coinvalue = Integer.parseInt((String)jComboBox2.getSelectedItem());
+        
+        
+        
+        
+        
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
@@ -572,8 +586,6 @@ public static void main(String args[]) {
     private java.awt.TextField textField8;
     private java.awt.TextField textField9;
     // End of variables declaration//GEN-END:variables
-
-
 
 }
 
