@@ -230,19 +230,19 @@ public class Kassomat {
 	}
 
 	public void pubValidatorEvent(KassomatJson kassomatJson) {
-		getValidatorEvent().publish(kassomatJson.toJson());
+		getValidatorEvent().publishAsync(kassomatJson.toJson());
 	}
 
 	public void pubValidatorResponse(KassomatJson kassomatJson) {
-		getValidatorResponse().publish(kassomatJson.toJson());
+		getValidatorResponse().publishAsync(kassomatJson.toJson());
 	}
 
 	public void pubHopperEvent(KassomatJson kassomatJson) {
-		getHopperEvent().publish(kassomatJson.toJson());
+		getHopperEvent().publishAsync(kassomatJson.toJson());
 	}
 
 	public void pubHopperResponse(KassomatJson kassomatJson) {
-		getHopperResponse().publish(kassomatJson.toJson());
+		getHopperResponse().publishAsync(kassomatJson.toJson());
 	}
 
 	public int getTotalAmount() {
