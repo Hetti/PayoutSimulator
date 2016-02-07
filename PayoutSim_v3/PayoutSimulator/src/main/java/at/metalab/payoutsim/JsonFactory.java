@@ -1,5 +1,7 @@
 package at.metalab.payoutsim;
 
+import java.util.UUID;
+
 
 /**
  * Factory class for creating JSON objects.
@@ -8,7 +10,7 @@ package at.metalab.payoutsim;
  */
 
 public class JsonFactory {
-
+	
 	private static KassomatJson event(String event) {
 		KassomatJson e = new KassomatJson();
 		e.event = event;
@@ -16,6 +18,14 @@ public class JsonFactory {
 		return e;
 	}
 
+	public static KassomatJson response(KassomatJson kassomatJson) {
+		KassomatJson response = new KassomatJson();
+		response.correlId = kassomatJson.msgId;
+		response.msgId = UUID.randomUUID().toString();
+		
+		return response;
+	}
+	
 	public static KassomatJson read(int channel) {
 		KassomatJson e = event("read");
 		e.channel = String.valueOf(channel);

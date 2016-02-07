@@ -1,7 +1,5 @@
 package at.metalab.payoutsim;
 
-import java.util.List;
-
 import javafx.embed.swing.JFXPanel;
 
 import org.redisson.Config;
@@ -12,6 +10,7 @@ import org.redisson.core.PatternMessageListener;
 
 import at.metalab.payoutsim.Kassomat.ChannelSetup;
 import at.metalab.payoutsim.Kassomat.Monies;
+import at.metalab.payoutsim.Utils.PayoutResult;
 
 import com.mycompany.payoutsimulator.PayoutFrame;
 
@@ -27,12 +26,13 @@ public class PayoutSimMain {
 		RedissonClient r = Redisson.create(c);
 
 		// log all messages
-		r.<String> getPatternTopic("*").addListener(
+		Redisson.create(c).<String> getPatternTopic("*").addListener(
 				new PatternMessageListener<String>() {
 					@Override
 					public void onMessage(String pattern, String channel,
 							String msg) {
-						System.out.println("[redis-topic: '" + channel + "'] " + msg);
+						System.out.println("[redis-topic: '" + channel + "'] "
+								+ msg);
 					}
 				});
 
@@ -56,11 +56,14 @@ public class PayoutSimMain {
 		validatorMonies.setAmount(1, 3); // 3 x 5 euro
 		validatorMonies.setAmount(2, 2); // 2 x 10 euro
 		validatorMonies.setAmount(3, 1); // 1 x 20 euro
+		validatorMonies.setAmount(4, 1); // 1 x 50 euro
 
 		final Monies hopperMonies = new Monies(hopperSetup);
-		hopperMonies.setAmount(1, 2); // 1 x 0.10 euro
-		hopperMonies.setAmount(2, 1); // 2 x 0.20 euro
-		hopperMonies.setAmount(3, 5); // 3 x 0.50 euro
+		hopperMonies.setAmount(1, 10); // 10 x 10 cent
+		hopperMonies.setAmount(2, 5); // 5 x 20 cent
+		hopperMonies.setAmount(3, 4); // 4 x 50 cent
+		hopperMonies.setAmount(4, 5); // 5 x 1 euro
+		hopperMonies.setAmount(5, 3); // 3 x 2 euro
 
 		// We need all topics
 		final Kassomat kassomat = new Kassomat(validatorSetup, hopperSetup,
@@ -72,29 +75,88 @@ public class PayoutSimMain {
 				r.<String> getTopic("validator-response"),
 				r.<String> getTopic("validator-event"));
 
-		System.out.println("amount in kassomat: " + kassomat.getReadableTotalAmount());
-		
-		kassomat.getValidatorEvent().addListener(new MessageListener<String>() {
+		System.out.println("amount in kassomat: "
+				+ kassomat.getReadableTotalAmount());
+
+		kassomat.getValidatorRequest().addListener(
+				new MessageListener<String>() {
+
+					@Override
+					public void onMessage(String topic, String message) {
+						KassomatJson cmd = KassomatJson.fromJson(message);
+						KassomatJson response = JsonFactory.response(cmd);
+
+						switch (cmd.cmd) {
+						case "do-payout":
+							break;
+						case "test-payout":
+							break;
+						case "smart-empty":
+							break;
+						default:
+							response.error = "unknown command";
+						}
+
+						kassomat.pubValidatorResponse(response);
+					}
+				});
+
+		kassomat.getHopperRequest().addListener(new MessageListener<String>() {
 
 			@Override
 			public void onMessage(String topic, String message) {
-				KassomatJson event = KassomatJson.fromJson(message);
-				if ("do-payout".equals(event.event)) {
-				} else if ("test-payout".equals(event.event)) {
-				} else if ("smart-empty".equals(event.event)) {
-				}
-			}
-		});
+				KassomatJson cmd = KassomatJson.fromJson(message);
+				KassomatJson response = JsonFactory.response(cmd);
 
-		kassomat.getHopperEvent().addListener(new MessageListener<String>() {
+				switch (cmd.cmd) {
+				case "do-payout": {
+					PayoutResult payoutResult = Utils.testPayout(cmd.amount,
+							hopperMonies);
 
-			@Override
-			public void onMessage(String topic, String message) {
-				KassomatJson event = KassomatJson.fromJson(message);
-				if ("do-payout".equals(event.event)) {
-				} else if ("test-payout".equals(event.event)) {
-				} else if ("smart-empty".equals(event.event)) {
+					switch (payoutResult) {
+					case OK:
+						response.result = "ok";
+						// TODO: initiate payout
+						break;
+					case ERR_CANT_PAY_EXACT_AMOUNT:
+						response.error = "can't pay exact amount";
+						break;
+					case ERR_NOT_ENOUGH_MONEY:
+						response.error = "not enough value in smart payout";
+						break;
+					default:
+						response.error = "unknown";
+					}
+
+					break;
 				}
+				case "test-payout": {
+					PayoutResult payoutResult = Utils.testPayout(cmd.amount,
+							hopperMonies);
+
+					switch (payoutResult) {
+					case OK:
+						response.result = "ok";
+						break;
+					case ERR_CANT_PAY_EXACT_AMOUNT:
+						response.error = "can't pay exact amount";
+						break;
+					case ERR_NOT_ENOUGH_MONEY:
+						response.error = "not enough value in smart payout";
+						break;
+					default:
+						response.error = "unknown";
+					}
+
+					break;
+				}
+				case "smart-empty":
+					break;
+				default:
+					response.error = "unknown command";
+				}
+
+				kassomat.pubHopperResponse(response);
 			}
 		});
 
@@ -105,7 +167,8 @@ public class PayoutSimMain {
 				KassomatJson event = KassomatJson.fromJson(message);
 				if ("credit".equals(event.event)) {
 					validatorMonies.increase(Integer.parseInt(event.channel));
-					System.out.println("amount in kassomat now: " + kassomat.getReadableTotalAmount());
+					System.out.println("amount in kassomat now: "
+							+ kassomat.getReadableTotalAmount());
 				}
 			}
 		});
@@ -117,7 +180,8 @@ public class PayoutSimMain {
 				KassomatJson event = KassomatJson.fromJson(message);
 				if ("credit".equals(event.event)) {
 					hopperMonies.increase(hopperSetup.getChannel(event.amount));
-					System.out.println("amount in kassomat now: " + kassomat.getReadableTotalAmount());
+					System.out.println("amount in kassomat now: "
+							+ kassomat.getReadableTotalAmount());
 				}
 			}
 		});

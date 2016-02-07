@@ -807,6 +807,7 @@ public class PayoutFrame extends javax.swing.JFrame {
 	}// </editor-fold>//GEN-END:initComponents
 
 	private static void playSound(String sample) {
+		/*
 		try {
 			String strUri = Thread.currentThread().getContextClassLoader()
 					.getResource(sample).toURI().toString();
@@ -817,13 +818,14 @@ public class PayoutFrame extends javax.swing.JFrame {
 			// too bad
 			exception.printStackTrace();
 		}
+		*/
 	}
 
 	private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButton1ActionPerformed
 		int papervalue = Integer
 				.parseInt((String) jComboBox1.getSelectedItem());
 
-		EventQueue.invokeLater(new Runnable() {
+		new Thread(new Runnable() {
 
 			@Override
 			public void run() {
@@ -836,13 +838,13 @@ public class PayoutFrame extends javax.swing.JFrame {
 					System.err.println("simulation interrupted");
 				}
 			}
-		});
+		}).start();;
 	}// GEN-LAST:event_jButton1ActionPerformed
 
 	private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButton2ActionPerformed
 		int coinvalue = Integer.parseInt((String) jComboBox2.getSelectedItem());
 
-		EventQueue.invokeLater(new Runnable() {
+		new Thread(new Runnable() {
 
 			@Override
 			public void run() {
@@ -860,7 +862,7 @@ public class PayoutFrame extends javax.swing.JFrame {
 					System.err.println("simulation interrupted");
 				}
 			}
-		});
+		}).start();;
 	}// GEN-LAST:event_jButton2ActionPerformed
 
 	private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButton5ActionPerformed
@@ -888,7 +890,7 @@ public class PayoutFrame extends javax.swing.JFrame {
 	}// GEN-LAST:event_jButton6ActionPerformed
 
 	private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButton3ActionPerformed
-		EventQueue.invokeLater(new Runnable() {
+		new Thread(new Runnable() {
 
 			@Override
 			public void run() {
@@ -899,7 +901,7 @@ public class PayoutFrame extends javax.swing.JFrame {
 					System.err.println("simulation interrupted");
 				}
 			}
-		});
+		}).start();
 	}// GEN-LAST:event_jButton3ActionPerformed
 
 	private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButton4ActionPerformed

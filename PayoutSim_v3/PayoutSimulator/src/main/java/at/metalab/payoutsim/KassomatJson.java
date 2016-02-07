@@ -22,7 +22,7 @@ public class KassomatJson {
 
 	public String toJson() {
 		try {
-			return om.writeValueAsString(this).replaceAll(" ", "");
+			return om.writeValueAsString(this);
 		} catch (Exception exception) {
 			throw new RuntimeException("problem while marshalling json",
 					exception);

@@ -123,7 +123,7 @@ public class Kassomat {
 		public int getAmount(int channel) {
 			return amountByChannel.get(channel);
 		}
-		
+
 		public int getTotalAmount() {
 			synchronized (amountByChannel) {
 				int totalAmount = 0;
@@ -225,12 +225,14 @@ public class Kassomat {
 		return Utils.amountReadable(getTotalAmount());
 	}
 
-	private final List<Runnable> steps = new ArrayList<Runnable>();
+	private final List<Runnable> steps = Collections
+			.synchronizedList(new ArrayList<Runnable>());
 
-	private final List<Runnable> stepsOnce = new ArrayList<Runnable>();
+	private final List<Runnable> stepsOnce = Collections
+			.synchronizedList(new ArrayList<Runnable>());
 
 	public synchronized void poll() {
-		{
+		synchronized (stepsOnce) {
 			Iterator<Runnable> i = stepsOnce.iterator();
 
 			while (i.hasNext()) {
@@ -243,7 +245,7 @@ public class Kassomat {
 			}
 		}
 
-		{
+		synchronized (steps) {
 			Iterator<Runnable> i = steps.iterator();
 
 			while (i.hasNext()) {
@@ -254,14 +256,14 @@ public class Kassomat {
 	}
 
 	public void waitFor(Runnable runnable) throws InterruptedException {
-		Thread t = new Thread(runnable);
+		Thread t = new Thread(runnable, "simulation-runner");
 		t.start();
 		t.join();
 	}
 
 	public void runOnce(Runnable step) throws InterruptedException {
+		registerOnce(step);
 		synchronized (step) {
-			registerOnce(step);
 			step.wait();
 		}
 	}
@@ -270,7 +272,7 @@ public class Kassomat {
 			throws InterruptedException {
 		try {
 			register(step);
-			step.run();
+			step.run(); // guarantees execution at least once (regardless of poll interval)
 			waitRnd(minMillis, maxMillis);
 		} finally {
 			unregister(step);
@@ -296,14 +298,20 @@ public class Kassomat {
 	}
 
 	private void registerOnce(Runnable step) {
-		stepsOnce.add(step);
+		synchronized (stepsOnce) {
+			stepsOnce.add(step);
+		}
 	}
 
 	private void register(Runnable step) {
-		steps.add(step);
+		synchronized (steps) {
+			steps.add(step);
+		}
 	}
 
 	private void unregister(Runnable step) {
-		steps.remove(step);
+		synchronized (steps) {
+			steps.remove(step);
+		}
 	}
 }
