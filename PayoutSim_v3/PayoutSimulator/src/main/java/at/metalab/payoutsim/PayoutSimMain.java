@@ -1,5 +1,7 @@
 package at.metalab.payoutsim;
 
+import java.util.List;
+
 import javafx.embed.swing.JFXPanel;
 
 import org.redisson.Config;
@@ -53,10 +55,12 @@ public class PayoutSimMain {
 		hopperSetup.setValueInChannel(5, 200);
 
 		final Monies validatorMonies = new Monies(validatorSetup);
+		/*
 		validatorMonies.setAmount(1, 3); // 3 x 5 euro
 		validatorMonies.setAmount(2, 2); // 2 x 10 euro
 		validatorMonies.setAmount(3, 1); // 1 x 20 euro
 		validatorMonies.setAmount(4, 1); // 1 x 50 euro
+		*/
 
 		final Monies hopperMonies = new Monies(hopperSetup);
 		hopperMonies.setAmount(1, 10); // 10 x 10 cent
@@ -116,16 +120,32 @@ public class PayoutSimMain {
 					switch (payoutResult) {
 					case OK:
 						response.result = "ok";
-						// TODO: initiate payout
+						kassomat.pubHopperResponse(response);
+
+						List<Integer> coins = Utils.generatePayout(cmd.amount, hopperMonies);
+						new Thread() {
+							public void run() {
+								try {
+									Simulations.dispenseCoins(kassomat, coins);
+								}
+								catch(InterruptedException interruptedException) {
+									interruptedException.printStackTrace();
+								}
+							};
+						}.start();
+						
 						break;
 					case ERR_CANT_PAY_EXACT_AMOUNT:
 						response.error = "can't pay exact amount";
+						kassomat.pubHopperResponse(response);
 						break;
 					case ERR_NOT_ENOUGH_MONEY:
 						response.error = "not enough value in smart payout";
+						kassomat.pubHopperResponse(response);
 						break;
 					default:
 						response.error = "unknown";
+						kassomat.pubHopperResponse(response);
 					}
 
 					break;
@@ -137,26 +157,31 @@ public class PayoutSimMain {
 					switch (payoutResult) {
 					case OK:
 						response.result = "ok";
+						kassomat.pubHopperResponse(response);
 						break;
 					case ERR_CANT_PAY_EXACT_AMOUNT:
 						response.error = "can't pay exact amount";
+						kassomat.pubHopperResponse(response);
 						break;
 					case ERR_NOT_ENOUGH_MONEY:
 						response.error = "not enough value in smart payout";
+						kassomat.pubHopperResponse(response);
 						break;
 					default:
 						response.error = "unknown";
+						kassomat.pubHopperResponse(response);
 					}
 
 					break;
 				}
 				case "smart-empty":
+					response.result = "ok";
+					kassomat.pubHopperResponse(response);
 					break;
 				default:
 					response.error = "unknown command";
 				}
 
-				kassomat.pubHopperResponse(response);
 			}
 		});
 

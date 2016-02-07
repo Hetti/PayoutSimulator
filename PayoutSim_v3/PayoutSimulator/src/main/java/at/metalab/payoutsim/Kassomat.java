@@ -200,6 +200,14 @@ public class Kassomat {
 	public RTopic<String> getValidatorEvent() {
 		return validatorEvent;
 	}
+	
+	public Monies getHopperMonies() {
+		return hopperMonies;
+	}
+	
+	public Monies getValidatorMonies() {
+		return validatorMonies;
+	}
 
 	public void pubValidatorEvent(KassomatJson kassomatJson) {
 		getValidatorEvent().publish(kassomatJson.toJson());

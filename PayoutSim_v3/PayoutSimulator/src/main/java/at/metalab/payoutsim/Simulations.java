@@ -1,6 +1,70 @@
 package at.metalab.payoutsim;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import at.metalab.payoutsim.Kassomat.Monies;
+
 public class Simulations {
+
+	public static void dispenseCoins(final Kassomat kassomat,
+			List<Integer> coins) throws InterruptedException {
+		Runnable runnable = new Runnable() {
+
+			public void run() {
+				try {
+					int dispensed = 0;
+					List<Integer> shuffeledCoins = new ArrayList<Integer>();
+					shuffeledCoins.addAll(coins);
+					Collections.shuffle(shuffeledCoins);
+
+					for (Integer coin : coins) {
+						dispensed += coin;
+						final int finalDispensed = dispensed; // -.-
+						kassomat.runFor(500, 2000, new Runnable() {
+							@Override
+							public void run() {
+								kassomat.pubValidatorEvent(JsonFactory
+										.dispensing(finalDispensed));
+							}
+						});
+					}
+
+					kassomat.runOnce(new Runnable() {
+						@Override
+						public void run() {
+							kassomat.pubValidatorEvent(JsonFactory.cashboxPaid(
+									0, "EUR"));
+						}
+					});
+
+					final int finalDispensed = dispensed; // -.-
+					kassomat.runOnce(new Runnable() {
+						@Override
+						public void run() {
+							kassomat.pubValidatorEvent(JsonFactory
+									.dispensed(finalDispensed));
+						}
+					});
+
+					// not totally accurate i guess, but we reduce the amount of
+					// money
+					// in the kassomat here after the dispense cycle has
+					// completed.
+					Monies m = kassomat.getHopperMonies();
+
+					for (Integer coin : shuffeledCoins) {
+						m.decrease(m.getChannelSetup().getChannel(coin));
+					}
+				} catch (InterruptedException interruptedException) {
+					interruptedException.printStackTrace(System.err);
+				}
+			}
+		};
+
+		kassomat.waitFor(runnable);
+	}
 
 	public static void rejectNote(final Kassomat kassomat)
 			throws InterruptedException {
