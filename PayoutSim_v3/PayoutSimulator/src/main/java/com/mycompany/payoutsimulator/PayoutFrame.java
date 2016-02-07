@@ -8,12 +8,10 @@ package com.mycompany.payoutsimulator;
 import java.awt.EventQueue;
 import java.awt.Point;
 import java.awt.Toolkit;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.util.Observable;
+import java.util.Observer;
 
 import javafx.embed.swing.JFXPanel;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 
 import javax.swing.ImageIcon;
 
@@ -42,6 +40,86 @@ public class PayoutFrame extends javax.swing.JFrame {
 						.getResource("beutel.gif")).getImage(),
 				new Point(0, 0), "custom cursor"));
 
+		textField1.setText("#1");
+		textField2.setText("#2");
+		textField3.setText("#3");
+		textField4.setText("#4");
+		textField5.setText("#5");
+		textField6.setText("#6");
+		textField7.setText("#7");
+		textField8.setText("#8"); // 10c
+		textField9.setText("#9"); // 20c
+		textField10.setText("#10"); // 50c
+		textField11.setText("#11"); // 1e
+		textField12.setText("#12"); // 2e
+
+		EventQueue.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				Observer observer = new Observer() {
+
+					@Override
+					public void update(Observable o, Object arg) {
+						textField8.setText(String.valueOf(kassomat
+								.getHopperMonies().getAmount(1))); // 10c
+						textField8.repaint();
+
+						textField9.setText(String.valueOf(kassomat
+								.getHopperMonies().getAmount(2))); // 20c
+						textField9.repaint();
+
+						textField10.setText(String.valueOf(kassomat
+								.getHopperMonies().getAmount(3))); // 50c
+						textField10.repaint();
+
+						textField11.setText(String.valueOf(kassomat
+								.getHopperMonies().getAmount(4))); // 1e
+						textField11.repaint();
+
+						textField12.setText(String.valueOf(kassomat
+								.getHopperMonies().getAmount(5))); // 2e
+						textField12.repaint();
+
+						// notes
+						textField1.setText(String.valueOf(kassomat
+								.getValidatorMonies().getAmount(1))); // 10c
+						textField1.repaint();
+
+						textField2.setText(String.valueOf(kassomat
+								.getValidatorMonies().getAmount(2))); // 20c
+						textField2.repaint();
+
+						textField3.setText(String.valueOf(kassomat
+								.getValidatorMonies().getAmount(3))); // 50c
+						textField3.repaint();
+
+						textField4.setText(String.valueOf(kassomat
+								.getValidatorMonies().getAmount(4))); // 1e
+						textField4.repaint();
+
+						textField5.setText(String.valueOf(kassomat
+								.getValidatorMonies().getAmount(5))); // 1e
+						textField5.repaint();
+
+						textField6.setText(String.valueOf(kassomat
+								.getValidatorMonies().getAmount(6))); // 2e
+						textField6.repaint();
+
+						textField7.setText(String.valueOf(kassomat
+								.getValidatorMonies().getAmount(7))); // 2e
+						textField7.repaint();
+					}
+				};
+
+				observer.update(null, null); // dirty hack
+
+				kassomat.getValidatorMonies().getMoneyChange()
+						.addObserver(observer);
+				kassomat.getHopperMonies().getMoneyChange()
+						.addObserver(observer);
+			}
+		});
 	}
 
 	/**
@@ -808,17 +886,12 @@ public class PayoutFrame extends javax.swing.JFrame {
 
 	private static void playSound(String sample) {
 		/*
-		try {
-			String strUri = Thread.currentThread().getContextClassLoader()
-					.getResource(sample).toURI().toString();
-			Media sound = new Media(strUri);
-			MediaPlayer mediaPlayer = new MediaPlayer(sound);
-			mediaPlayer.play();
-		} catch (Exception exception) {
-			// too bad
-			exception.printStackTrace();
-		}
-		*/
+		 * try { String strUri = Thread.currentThread().getContextClassLoader()
+		 * .getResource(sample).toURI().toString(); Media sound = new
+		 * Media(strUri); MediaPlayer mediaPlayer = new MediaPlayer(sound);
+		 * mediaPlayer.play(); } catch (Exception exception) { // too bad
+		 * exception.printStackTrace(); }
+		 */
 	}
 
 	private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButton1ActionPerformed
@@ -838,7 +911,8 @@ public class PayoutFrame extends javax.swing.JFrame {
 					System.err.println("simulation interrupted");
 				}
 			}
-		}).start();;
+		}).start();
+		;
 	}// GEN-LAST:event_jButton1ActionPerformed
 
 	private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButton2ActionPerformed
@@ -862,7 +936,8 @@ public class PayoutFrame extends javax.swing.JFrame {
 					System.err.println("simulation interrupted");
 				}
 			}
-		}).start();;
+		}).start();
+		;
 	}// GEN-LAST:event_jButton2ActionPerformed
 
 	private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButton5ActionPerformed

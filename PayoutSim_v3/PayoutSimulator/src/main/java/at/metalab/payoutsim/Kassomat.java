@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Observable;
 import java.util.Random;
 import java.util.Set;
 
@@ -82,11 +83,20 @@ public class Kassomat {
 		};
 	}
 
+	private static class Observable2 extends Observable {
+		@Override
+		public synchronized void setChanged() {
+			super.setChanged();
+		}
+	}
+
 	public static class Monies {
 
 		private Map<Integer, Integer> amountByChannel = new HashMap<Integer, Integer>();
 
 		private ChannelSetup channelSetup;
+
+		private Observable2 moneyChange = new Observable2();
 
 		public Monies(ChannelSetup channelSetup) {
 			this.channelSetup = channelSetup;
@@ -105,6 +115,9 @@ public class Kassomat {
 			synchronized (amountByChannel) {
 				int currentAmount = amountByChannel.get(channel);
 				amountByChannel.put(channel, currentAmount + 1);
+
+				moneyChange.setChanged();
+				moneyChange.notifyObservers(this);
 			}
 		}
 
@@ -117,11 +130,18 @@ public class Kassomat {
 				}
 
 				amountByChannel.put(channel, currentAmount - 1);
+
+				moneyChange.setChanged();
+				moneyChange.notifyObservers(this);
 			}
 		}
 
 		public int getAmount(int channel) {
 			return amountByChannel.get(channel);
+		}
+
+		public Observable getMoneyChange() {
+			return moneyChange;
 		}
 
 		public int getTotalAmount() {
@@ -200,11 +220,11 @@ public class Kassomat {
 	public RTopic<String> getValidatorEvent() {
 		return validatorEvent;
 	}
-	
+
 	public Monies getHopperMonies() {
 		return hopperMonies;
 	}
-	
+
 	public Monies getValidatorMonies() {
 		return validatorMonies;
 	}
@@ -280,7 +300,8 @@ public class Kassomat {
 			throws InterruptedException {
 		try {
 			register(step);
-			step.run(); // guarantees execution at least once (regardless of poll interval)
+			step.run(); // guarantees execution at least once (regardless of
+						// poll interval)
 			waitRnd(minMillis, maxMillis);
 		} finally {
 			unregister(step);
