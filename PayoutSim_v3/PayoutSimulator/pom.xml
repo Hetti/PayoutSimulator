@@ -31,6 +31,20 @@
 			<artifactId>commons-lang3</artifactId>
 			<version>3.4</version>
 		</dependency>
+		<dependency>
+			<!-- see https://commons.apache.org/proper/commons-collections/ -->
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-collections4</artifactId>
+			<version>4.1</version>
+		</dependency>
+		<!-- dependencies below only needed for testing -->
+		<dependency>
+			<!-- https://github.com/junit-team/junit/wiki/Getting-started -->
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>

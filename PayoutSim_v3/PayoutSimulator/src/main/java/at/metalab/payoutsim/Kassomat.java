@@ -1,11 +1,14 @@
 package at.metalab.payoutsim;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 
@@ -28,11 +31,11 @@ public class Kassomat {
 	private final ChannelSetup validatorSetup;
 
 	private final ChannelSetup hopperSetup;
-	
+
 	private final Monies validatorMonies;
-	
+
 	private final Monies hopperMonies;
-	
+
 	public static class ChannelSetup {
 
 		private Map<Integer, Integer> valueByChannel = new HashMap<Integer, Integer>();
@@ -55,6 +58,28 @@ public class Kassomat {
 		public Set<Integer> getChannels() {
 			return valueByChannel.keySet();
 		}
+
+		public List<Integer> getChannelsByDescendingValue() {
+			List<Map.Entry<Integer, Integer>> sortedEntries = new LinkedList<Map.Entry<Integer, Integer>>(
+					channelByValue.entrySet());
+			Collections.sort(sortedEntries, BY_VALUE_DESC);
+
+			List<Integer> channels = new ArrayList<Integer>();
+			for (Map.Entry<Integer, Integer> e : sortedEntries) {
+				channels.add(e.getValue());
+			}
+
+			return channels;
+		}
+
+		private static Comparator<Map.Entry<Integer, Integer>> BY_VALUE_DESC = new Comparator<Map.Entry<Integer, Integer>>() {
+			@Override
+			public int compare(Entry<Integer, Integer> o1,
+					Entry<Integer, Integer> o2) {
+				return o2.getValue().compareTo(o1.getValue()); // o2 compare o1!
+																// descending!
+			}
+		};
 	}
 
 	public static class Monies {
@@ -95,6 +120,10 @@ public class Kassomat {
 			}
 		}
 
+		public int getAmount(int channel) {
+			return amountByChannel.get(channel);
+		}
+		
 		public int getTotalAmount() {
 			synchronized (amountByChannel) {
 				int totalAmount = 0;
@@ -110,18 +139,21 @@ public class Kassomat {
 		public String getReadableTotalAmount() {
 			return Utils.amountReadable(getTotalAmount());
 		}
-		
+
 		@Override
 		public String toString() {
-			return super.toString()
-					+ "(" + getReadableTotalAmount() + ", totalAmount="
-					+ getTotalAmount()
-					+ ", "
+			return super.toString() + "(" + getReadableTotalAmount()
+					+ ", totalAmount=" + getTotalAmount() + ", "
 					+ amountByChannel + ")";
+		}
+
+		public ChannelSetup getChannelSetup() {
+			return channelSetup;
 		}
 	}
 
-	public Kassomat(ChannelSetup nvSetup, ChannelSetup hSetup, Monies nvMonies, Monies hMonies, RTopic<String> hopperRequest,
+	public Kassomat(ChannelSetup nvSetup, ChannelSetup hSetup, Monies nvMonies,
+			Monies hMonies, RTopic<String> hopperRequest,
 			RTopic<String> hopperResponse, RTopic<String> hopperEvent,
 			RTopic<String> validatorRequest, RTopic<String> validatorResponse,
 			RTopic<String> validatorEvent) {
@@ -140,7 +172,7 @@ public class Kassomat {
 	public ChannelSetup getValidatorSetup() {
 		return validatorSetup;
 	}
-	
+
 	public ChannelSetup getHopperSetup() {
 		return hopperSetup;
 	}
@@ -188,11 +220,11 @@ public class Kassomat {
 	public int getTotalAmount() {
 		return hopperMonies.getTotalAmount() + validatorMonies.getTotalAmount();
 	}
-	
+
 	public String getReadableTotalAmount() {
 		return Utils.amountReadable(getTotalAmount());
 	}
-	
+
 	private final List<Runnable> steps = new ArrayList<Runnable>();
 
 	private final List<Runnable> stepsOnce = new ArrayList<Runnable>();
@@ -226,7 +258,7 @@ public class Kassomat {
 		t.start();
 		t.join();
 	}
-	
+
 	public void runOnce(Runnable step) throws InterruptedException {
 		synchronized (step) {
 			registerOnce(step);

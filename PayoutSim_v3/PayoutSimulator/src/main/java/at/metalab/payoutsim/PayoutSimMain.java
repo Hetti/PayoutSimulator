@@ -1,5 +1,7 @@
 package at.metalab.payoutsim;
 
+import java.util.List;
+
 import javafx.embed.swing.JFXPanel;
 
 import org.redisson.Config;
