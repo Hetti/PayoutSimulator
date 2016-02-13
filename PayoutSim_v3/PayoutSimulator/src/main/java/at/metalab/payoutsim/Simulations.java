@@ -20,6 +20,9 @@ public class Simulations {
 					Collections.shuffle(shuffeledCoins);
 
 					for (Integer coin : coins) {
+						kassomat.getHopperMonies().decrease(
+								kassomat.getHopperMonies().getChannelSetup().getChannel(coin));
+
 						dispensed += coin;
 						final int finalDispensed = dispensed; // -.-
 						kassomat.runFor(500, 2000, new Runnable() {
@@ -29,8 +32,6 @@ public class Simulations {
 										.dispensing(finalDispensed));
 							}
 						});
-						kassomat.getHopperMonies().decrease(
-								kassomat.getHopperMonies().getChannelSetup().getChannel(coin));
 					}
 
 					kassomat.runOnce(new Runnable() {
