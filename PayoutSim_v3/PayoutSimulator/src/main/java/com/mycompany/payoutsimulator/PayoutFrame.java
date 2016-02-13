@@ -17,6 +17,7 @@ import javax.swing.ImageIcon;
 
 import at.metalab.payoutsim.Kassomat;
 import at.metalab.payoutsim.Simulations;
+import at.metalab.payoutsim.Kassomat.Monies;
 
 /**
  *
@@ -956,7 +957,14 @@ public class PayoutFrame extends javax.swing.JFrame {
 
 	private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButton7ActionPerformed
 		playSound("cashregister.wav");
-		// TODO add your handling code here:
+		
+		Monies m = kassomat.getHopperMonies();
+		m.setAmount(1, Integer.parseInt(textField8.getText()));
+		m.setAmount(2, Integer.parseInt(textField9.getText()));
+		m.setAmount(3, Integer.parseInt(textField10.getText()));
+		m.setAmount(4, Integer.parseInt(textField11.getText()));
+		m.setAmount(5, Integer.parseInt(textField12.getText()));
+		
 	}// GEN-LAST:event_jButton7ActionPerformed
 
 	private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButton6ActionPerformed
