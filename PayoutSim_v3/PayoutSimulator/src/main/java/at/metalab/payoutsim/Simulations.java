@@ -19,7 +19,7 @@ public class Simulations {
 					shuffeledCoins.addAll(coins);
 					Collections.shuffle(shuffeledCoins);
 
-					for (Integer coin : coins) {
+					for (Integer coin : shuffeledCoins) {
 						kassomat.getHopperMonies().decrease(
 								kassomat.getHopperMonies().getChannelSetup().getChannel(coin));
 
