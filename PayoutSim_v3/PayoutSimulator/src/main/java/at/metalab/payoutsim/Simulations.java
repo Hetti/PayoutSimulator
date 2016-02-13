@@ -25,7 +25,7 @@ public class Simulations {
 
 						dispensed += coin;
 						final int finalDispensed = dispensed; // -.-
-						kassomat.runFor(500, 2000, new Runnable() {
+						kassomat.runFor(300, 500, new Runnable() {
 							@Override
 							public void run() {
 								kassomat.pubHopperEvent(JsonFactory
