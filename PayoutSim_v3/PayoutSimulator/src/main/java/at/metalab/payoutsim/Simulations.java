@@ -25,16 +25,18 @@ public class Simulations {
 						kassomat.runFor(500, 2000, new Runnable() {
 							@Override
 							public void run() {
-								kassomat.pubValidatorEvent(JsonFactory
+								kassomat.pubHopperEvent(JsonFactory
 										.dispensing(finalDispensed));
 							}
 						});
+						kassomat.getHopperMonies().decrease(
+								kassomat.getHopperMonies().getChannelSetup().getChannel(coin));
 					}
 
 					kassomat.runOnce(new Runnable() {
 						@Override
 						public void run() {
-							kassomat.pubValidatorEvent(JsonFactory.cashboxPaid(
+							kassomat.pubHopperEvent(JsonFactory.cashboxPaid(
 									0, "EUR"));
 						}
 					});
@@ -43,20 +45,10 @@ public class Simulations {
 					kassomat.runOnce(new Runnable() {
 						@Override
 						public void run() {
-							kassomat.pubValidatorEvent(JsonFactory
+							kassomat.pubHopperEvent(JsonFactory
 									.dispensed(finalDispensed));
 						}
 					});
-
-					// not totally accurate i guess, but we reduce the amount of
-					// money
-					// in the kassomat here after the dispense cycle has
-					// completed.
-					Monies m = kassomat.getHopperMonies();
-
-					for (Integer coin : shuffeledCoins) {
-						m.decrease(m.getChannelSetup().getChannel(coin));
-					}
 				} catch (InterruptedException interruptedException) {
 					interruptedException.printStackTrace(System.err);
 				}
@@ -117,42 +109,67 @@ public class Simulations {
 						}
 					});
 
-					kassomat.runOnce(new Runnable() {
-						@Override
-						public void run() {
-							kassomat.pubValidatorEvent(JsonFactory
-									.read(channel));
-						}
-					});
+					if(kassomat.getValidatorSetup().isInhibited(channel)) {
+						// this type of banknote is not accepted in the moment,
+						// simulate rejection.
+						
+						kassomat.runFor(1000, 3000, new Runnable() {
+							@Override
+							public void run() {
+								kassomat.pubValidatorEvent(JsonFactory.rejecting());
+							}
+						});
 
-					kassomat.runFor(1000, 3000, new Runnable() {
-						@Override
-						public void run() {
-							kassomat.pubValidatorEvent(JsonFactory.stacking());
-						}
-					});
+						kassomat.runOnce(new Runnable() {
+							
+							@Override
+							public void run() {
+								kassomat.pubValidatorEvent(JsonFactory
+										.rejected());
+							}
+						});
+					} else {
+						// all fine, this type of banknote is not inhibited now,
+						// we will simulate acceptance.
+						
+						kassomat.runOnce(new Runnable() {
+							@Override
+							public void run() {
+								kassomat.pubValidatorEvent(JsonFactory
+										.read(channel));
+							}
+						});
 
-					kassomat.runOnce(new Runnable() {
-						@Override
-						public void run() {
-							kassomat.pubValidatorEvent(JsonFactory.credit(
-									amount, channel));
-						}
-					});
+						kassomat.runFor(1000, 3000, new Runnable() {
+							@Override
+							public void run() {
+								kassomat.pubValidatorEvent(JsonFactory.stacking());
+							}
+						});
 
-					kassomat.runFor(1000, 1500, new Runnable() {
-						@Override
-						public void run() {
-							kassomat.pubValidatorEvent(JsonFactory.stacking());
-						}
-					});
+						kassomat.runOnce(new Runnable() {
+							@Override
+							public void run() {
+								kassomat.pubValidatorEvent(JsonFactory.credit(
+										amount, channel));
+							}
+						});
 
-					kassomat.runOnce(new Runnable() {
-						@Override
-						public void run() {
-							kassomat.pubValidatorEvent(JsonFactory.stacked());
-						}
-					});
+						kassomat.runFor(1000, 1500, new Runnable() {
+							@Override
+							public void run() {
+								kassomat.pubValidatorEvent(JsonFactory.stacking());
+							}
+						});
+
+						kassomat.runOnce(new Runnable() {
+							@Override
+							public void run() {
+								kassomat.pubValidatorEvent(JsonFactory.stacked());
+							}
+						});
+					}
+					
 				} catch (InterruptedException interruptedException) {
 					interruptedException.printStackTrace(System.err);
 				}
@@ -172,10 +189,8 @@ public class Simulations {
 					kassomat.runOnce(new Runnable() {
 						@Override
 						public void run() {
-							int channel = kassomat.getHopperSetup().getChannel(
-									amount);
-							kassomat.pubHopperEvent(JsonFactory.credit(amount,
-									channel));
+							kassomat.pubHopperEvent(JsonFactory.coinCredit(amount,
+									"EUR"));
 						}
 					});
 				} catch (InterruptedException interruptedException) {

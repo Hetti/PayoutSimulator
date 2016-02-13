@@ -47,13 +47,22 @@ public class PayoutSimMain {
 		validatorSetup.setValueInChannel(6, 20000);
 		validatorSetup.setValueInChannel(7, 50000);
 
+		// inhibit all channels
+		validatorSetup.setInhibited(1, true);
+		validatorSetup.setInhibited(2, true);
+		validatorSetup.setInhibited(3, true);
+		validatorSetup.setInhibited(4, true);
+		validatorSetup.setInhibited(5, true);
+		validatorSetup.setInhibited(6, true);
+		validatorSetup.setInhibited(7, true);
+		
 		final ChannelSetup hopperSetup = new ChannelSetup();
 		hopperSetup.setValueInChannel(1, 10);
 		hopperSetup.setValueInChannel(2, 20);
 		hopperSetup.setValueInChannel(3, 50);
 		hopperSetup.setValueInChannel(4, 100);
 		hopperSetup.setValueInChannel(5, 200);
-
+		
 		final Monies validatorMonies = new Monies(validatorSetup);
 		/*
 		validatorMonies.setAmount(1, 3); // 3 x 5 euro
@@ -63,12 +72,14 @@ public class PayoutSimMain {
 		*/
 
 		final Monies hopperMonies = new Monies(hopperSetup);
+		/*
 		hopperMonies.setAmount(1, 10); // 10 x 10 cent
 		hopperMonies.setAmount(2, 5); // 5 x 20 cent
 		hopperMonies.setAmount(3, 4); // 4 x 50 cent
 		hopperMonies.setAmount(4, 5); // 5 x 1 euro
 		hopperMonies.setAmount(5, 3); // 3 x 2 euro
-
+		 */
+		
 		// We need all topics
 		final Kassomat kassomat = new Kassomat(validatorSetup, hopperSetup,
 				validatorMonies, hopperMonies,
@@ -85,12 +96,35 @@ public class PayoutSimMain {
 		kassomat.getValidatorRequest().addListener(
 				new MessageListener<String>() {
 
+					private void setInhibit(int channel, String channels) {
+						if(channels.contains(String.valueOf(channel))) {
+							kassomat.getValidatorSetup().setInhibited(channel, true);
+						} else {
+							kassomat.getValidatorSetup().setInhibited(channel, false);
+						}
+					}
+					
 					@Override
 					public void onMessage(String topic, String message) {
 						KassomatJson cmd = KassomatJson.fromJson(message);
 						KassomatJson response = JsonFactory.response(cmd);
 
 						switch (cmd.cmd) {
+						case "inhibit-channels":
+							synchronized (kassomat.getValidatorSetup()) {
+								String channels = cmd.channels;
+								setInhibit(1, channels);
+								setInhibit(2, channels);
+								setInhibit(3, channels);
+								setInhibit(4, channels);
+								setInhibit(5, channels);
+								setInhibit(6, channels);
+								setInhibit(7, channels);
+							};
+							
+							response.result="ok";
+							
+							break;
 						case "do-payout":
 							break;
 						case "test-payout":
@@ -179,6 +213,7 @@ public class PayoutSimMain {
 					kassomat.pubHopperResponse(response);
 					break;
 				default:
+					System.out.println("unknown command: '" + cmd.cmd + "'");
 					response.error = "unknown command";
 				}
 
@@ -190,10 +225,15 @@ public class PayoutSimMain {
 			@Override
 			public void onMessage(String topic, String message) {
 				KassomatJson event = KassomatJson.fromJson(message);
-				if ("credit".equals(event.event)) {
+				
+				switch (event.event) {
+				case "credit":
 					validatorMonies.increase(Integer.parseInt(event.channel));
 					System.out.println("amount in kassomat now: "
 							+ kassomat.getReadableTotalAmount());
+					break;
+				default:
+					break;
 				}
 			}
 		});
@@ -203,7 +243,7 @@ public class PayoutSimMain {
 			@Override
 			public void onMessage(String topic, String message) {
 				KassomatJson event = KassomatJson.fromJson(message);
-				if ("credit".equals(event.event)) {
+				if ("coin credit".equals(event.event)) {
 					hopperMonies.increase(hopperSetup.getChannel(event.amount));
 					System.out.println("amount in kassomat now: "
 							+ kassomat.getReadableTotalAmount());

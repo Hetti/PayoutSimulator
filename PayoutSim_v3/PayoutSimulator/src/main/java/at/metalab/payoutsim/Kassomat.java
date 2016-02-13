@@ -43,6 +43,20 @@ public class Kassomat {
 
 		private Map<Integer, Integer> channelByValue = new HashMap<Integer, Integer>();
 
+		private Map<Integer, Boolean> inhibits = new HashMap<Integer, Boolean>();
+
+		public void setInhibited(int channel, boolean inhibited) {
+			synchronized (inhibits) {
+				inhibits.put(channel, inhibited);
+			}
+		}
+
+		public boolean isInhibited(int channel) {
+			synchronized (inhibits) {
+				return inhibits.get(channel);
+			}
+		}
+
 		public void setValueInChannel(int channel, int value) {
 			valueByChannel.put(channel, value);
 			channelByValue.put(value, channel);
@@ -250,7 +264,10 @@ public class Kassomat {
 	}
 
 	public String getReadableTotalAmount() {
-		return Utils.amountReadable(getTotalAmount());
+		return String.format("%s (notes: %s, coins: %s)", Utils
+				.amountReadable(getTotalAmount()), getValidatorMonies()
+				.getReadableTotalAmount(), getHopperMonies()
+				.getReadableTotalAmount());
 	}
 
 	private final List<Runnable> steps = Collections
@@ -265,11 +282,13 @@ public class Kassomat {
 
 			while (i.hasNext()) {
 				Runnable step = i.next();
+				i.remove();
+
 				step.run();
 				synchronized (step) {
 					step.notify();
 				}
-				i.remove();
+
 			}
 		}
 

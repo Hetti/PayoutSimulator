@@ -17,6 +17,7 @@ public class KassomatJson {
 	public String result;
 	public String cc;
 	public String channel;
+	public String channels;
 
 	private final static ObjectMapper om = new ObjectMapper();
 
