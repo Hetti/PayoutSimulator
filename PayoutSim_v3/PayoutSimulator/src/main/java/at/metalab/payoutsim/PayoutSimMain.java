@@ -131,6 +131,10 @@ public class PayoutSimMain {
 							break;
 						case "smart-empty":
 							break;
+						case "disable":
+							break;
+						case "enable":
+							break;
 						default:
 							response.error = "unknown command";
 						}
@@ -212,6 +216,10 @@ public class PayoutSimMain {
 					response.result = "ok";
 					kassomat.pubHopperResponse(response);
 					break;
+					
+				case "enable":
+					break;
+					
 				default:
 					System.out.println("unknown command: '" + cmd.cmd + "'");
 					response.error = "unknown command";
