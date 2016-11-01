@@ -212,6 +212,28 @@ public class PayoutSimMain {
 
 					break;
 				}
+				case "get-all-levels": {
+					response.result = "ok";
+
+					LevelJson levels[] = new LevelJson [kassomat.getHopperMonies().getChannelSetup().getChannels().size()];
+					
+					int l = 0;
+					for(int channel : kassomat.getHopperMonies().getChannelSetup().getChannels()) {
+						LevelJson levelJson = new LevelJson();
+						levelJson.cc = "EUR";
+						levelJson.level = kassomat.getHopperMonies().getAmount(channel);
+						levelJson.value = kassomat.getHopperMonies().getChannelSetup().getValue(channel);
+						
+						levels[l] = levelJson;
+						l++;
+					}
+					
+					response.levels = levels;
+						
+					kassomat.pubHopperResponse(response);
+					break;
+					
+				}
 				case "smart-empty":
 					response.result = "ok";
 					kassomat.pubHopperResponse(response);

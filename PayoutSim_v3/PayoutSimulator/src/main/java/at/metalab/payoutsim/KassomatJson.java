@@ -19,14 +19,15 @@ public class KassomatJson {
 	public String channel;
 	public String channels;
 
+	public LevelJson[] levels;
+
 	private final static ObjectMapper om = new ObjectMapper();
 
 	public String toJson() {
 		try {
 			return om.writeValueAsString(this);
 		} catch (Exception exception) {
-			throw new RuntimeException("problem while marshalling json",
-					exception);
+			throw new RuntimeException("problem while marshalling json", exception);
 		}
 	}
 
