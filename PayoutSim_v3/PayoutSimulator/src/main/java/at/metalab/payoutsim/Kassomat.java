@@ -122,6 +122,9 @@ public class Kassomat {
 		public void setAmount(int channel, int amount) {
 			synchronized (amountByChannel) {
 				amountByChannel.put(channel, amount);
+				
+				moneyChange.setChanged();
+				moneyChange.notifyObservers(this);
 			}
 		}
 

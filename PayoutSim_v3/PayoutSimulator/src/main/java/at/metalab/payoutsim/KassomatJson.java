@@ -13,6 +13,7 @@ public class KassomatJson {
 	public Integer requested;
 	public Integer dispensed;
 	public Integer amount;
+	public Integer level;
 	public String error;
 	public String result;
 	public String cc;

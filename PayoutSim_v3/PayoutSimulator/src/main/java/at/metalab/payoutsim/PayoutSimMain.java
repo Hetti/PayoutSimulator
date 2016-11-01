@@ -234,6 +234,15 @@ public class PayoutSimMain {
 					break;
 					
 				}
+				case "set-denomination-level": {
+					response.result = "ok";
+					kassomat.getHopperMonies().setAmount(
+							kassomat.getHopperMonies().getChannelSetup().getChannel(cmd.amount),
+							cmd.level);
+
+					kassomat.pubHopperResponse(response);
+					break;
+				}
 				case "smart-empty":
 					response.result = "ok";
 					kassomat.pubHopperResponse(response);
