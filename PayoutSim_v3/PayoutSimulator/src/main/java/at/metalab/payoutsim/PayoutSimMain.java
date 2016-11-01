@@ -110,7 +110,8 @@ public class PayoutSimMain {
 						KassomatJson response = JsonFactory.response(cmd);
 
 						switch (cmd.cmd) {
-						case "inhibit-channels":
+						case "disable-channels":
+						case "enable-channels":
 							synchronized (kassomat.getValidatorSetup()) {
 								String channels = cmd.channels;
 								setInhibit(1, channels);
@@ -123,7 +124,6 @@ public class PayoutSimMain {
 							};
 							
 							response.result="ok";
-							
 							break;
 						case "do-payout":
 							break;
