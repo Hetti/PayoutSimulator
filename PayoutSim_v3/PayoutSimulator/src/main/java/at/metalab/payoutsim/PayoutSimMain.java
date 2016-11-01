@@ -99,10 +99,13 @@ public class PayoutSimMain {
 					private void setInhibit(int channel, String channels) {
 						if(channels.contains(String.valueOf(channel))) {
 							kassomat.getValidatorSetup().setInhibited(channel, true);
-						} else {
-							kassomat.getValidatorSetup().setInhibited(channel, false);
 						}
 					}
+
+					private void unsetInhibit(int channel, String channels) {
+						if(channels.contains(String.valueOf(channel))) {
+							kassomat.getValidatorSetup().setInhibited(channel, false);
+						}					}
 					
 					@Override
 					public void onMessage(String topic, String message) {
@@ -110,8 +113,21 @@ public class PayoutSimMain {
 						KassomatJson response = JsonFactory.response(cmd);
 
 						switch (cmd.cmd) {
-						case "disable-channels":
 						case "enable-channels":
+							synchronized (kassomat.getValidatorSetup()) {
+								String channels = cmd.channels;
+								unsetInhibit(1, channels);
+								unsetInhibit(2, channels);
+								unsetInhibit(3, channels);
+								unsetInhibit(4, channels);
+								unsetInhibit(5, channels);
+								unsetInhibit(6, channels);
+								unsetInhibit(7, channels);
+							};
+							
+							response.result="ok";
+							break;
+						case "disable-channels":
 							synchronized (kassomat.getValidatorSetup()) {
 								String channels = cmd.channels;
 								setInhibit(1, channels);
