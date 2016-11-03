@@ -2,19 +2,17 @@ package at.metalab.payoutsim;
 
 import java.util.List;
 
-import javafx.embed.swing.JFXPanel;
-
 import org.redisson.Config;
 import org.redisson.Redisson;
 import org.redisson.RedissonClient;
 import org.redisson.core.MessageListener;
 import org.redisson.core.PatternMessageListener;
 
+import com.mycompany.payoutsimulator.PayoutFrame;
+
 import at.metalab.payoutsim.Kassomat.ChannelSetup;
 import at.metalab.payoutsim.Kassomat.Monies;
 import at.metalab.payoutsim.Utils.PayoutResult;
-
-import com.mycompany.payoutsimulator.PayoutFrame;
 
 public class PayoutSimMain {
 
